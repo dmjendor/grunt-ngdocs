@@ -1304,8 +1304,9 @@ function metadata(docs) {
     pages.push({
       section: doc.section,
       id: doc.id,
+      //id: globalID++,
       name: title(doc),
-      shortName: shortName,
+      shortName: doc.shortName,
       type: doc.ngdoc,
       moduleName: doc.moduleName,
       shortDescription: doc.shortDescription(),

@@ -241,6 +241,27 @@ docsApp.controller.DocsController = function($scope, $location, $window, section
       MODULE_TYPE = /^([^\.]+)\..+\.([A-Z][^\.]+)$/;
 
 
+
+  var map = {}
+  for (var i = 0; i < NG_DOCS.pages.length; i++) {
+    map[NG_DOCS.pages[i].id] = NG_DOCS.pages[i];
+  }
+  var newArray = [];
+  for (id in map) {
+    var item = map[id];
+    var parent = map[item.moduleName];
+    if (parent) {
+      parent.children = parent.children || [];
+      parent.children.push(item); // add reference to item
+    } else { // root
+      newArray.push(item);
+    }
+  }
+
+  console.log(newArray)
+  $scope.newPages = newArray;
+
+  /**********************************
   /**********************************
    Publish methods
    ***********************************/
@@ -534,11 +555,14 @@ function module(name, modules, optional) {
   return angular.module(name, modules);
 }
 
-module('docsApp', ['bootstrap', 'bootstrapPrettify'], ['ngAnimate']).
-  config(function($locationProvider) {
+module('docsApp', ['ui.bootstrap','ui.tree']).
+  config(function($locationProvider,treeConfig) {
     if (NG_DOCS.html5Mode) {
       $locationProvider.html5Mode(true).hashPrefix('!');
+    } else {
+      $locationProvider.html5Mode(false).hashPrefix('');
     }
+    treeConfig.defaultCollapsed = true; // collapse nodes by default
   }).
   factory(docsApp.serviceFactory).
   directive(docsApp.directive).

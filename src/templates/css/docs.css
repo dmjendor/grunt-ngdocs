@@ -324,3 +324,15 @@ ul.events > li > h3 {
 .type-hint-number {
   background:rgb(189, 63, 66);
 }
+
+
+.tree-node-content  {
+  line-height: 25px;
+  font-weight: bold;
+}
+
+.btn-xs {
+  padding: 0px 3px;
+  font-size: 10px;
+  line-height: 1.2;
+}
