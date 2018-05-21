@@ -1296,6 +1296,13 @@ function metadata(docs) {
       shortName = 'input [' + shortName + ']';
     }
 
+    var a = doc.file.substring(0, doc.file.lastIndexOf('/')),
+      b = a.split('app/'), // clean off the root 'app' directory
+      c = b[1].split('.'), // strip off the .component.js or .controller.js
+      d = c[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }), // replace dashes with camelcase
+      location = d.replace(/\//g,'.'), // replace slashes with dots
+      parent = location.substring(0, location.lastIndexOf('.'));
+
     doc.isDeprecated = false;
     if (doc.deprecated !== undefined) {
       doc.isDeprecated = true;
@@ -1306,6 +1313,8 @@ function metadata(docs) {
       id: doc.id,
       //id: globalID++,
       name: title(doc),
+      location: location,
+      parent: parent,
       shortName: doc.shortName,
       type: doc.ngdoc,
       moduleName: doc.moduleName,

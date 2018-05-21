@@ -247,9 +247,9 @@ docsApp.controller.DocsController = function($scope, $location, $window, section
     map[NG_DOCS.pages[i].id] = NG_DOCS.pages[i];
   }
   var newArray = [];
-  for (id in map) {
+  for (location in map) {
     var item = map[id];
-    var parent = map[item.moduleName];
+    var parent = map[item.parent];
     if (parent) {
       parent.children = parent.children || [];
       parent.children.push(item); // add reference to item
