@@ -10,9 +10,12 @@ img.AngularJS-small {
 }
 
 .breadcrumb {
-  padding-top: 6px;
-  padding-bottom: 0;
+  padding: 8px 0px;
   line-height: 18px
+}
+
+.breadcrumb > li {
+  display: inline;
 }
 
 .navbar img {
