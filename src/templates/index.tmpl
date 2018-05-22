@@ -33,7 +33,8 @@
       addTag('base', {href: baseUrl});
       addTag('link', {rel: 'stylesheet', href: 'css/bootstrap.min.css', type: 'text/css'});
       addTag('link', {rel: 'stylesheet', href: 'css/bootstrap-theme.css', type: 'text/css'});
-
+      addTag('link', {rel: 'stylesheet', href: 'css/normalize.css', type: 'text/css'});
+      addTag('link', {rel: 'stylesheet', href: 'css/tipuesearch.css', type: 'text/css'});
       addTag('link', {rel: 'stylesheet', href: 'css/angular-ui-tree.min.css', type: 'text/css'});
       addTag('link', {rel: 'stylesheet', href: 'css/docs.css', type: 'text/css'});
 
@@ -41,14 +42,14 @@
          addTag('link', {rel: 'stylesheet', href: '<%= url %>', type: 'text/css'}, sync);
       <% }); %>
 
-      //addTag('script', {src: 'js/google-code-prettify.js'}, sync);
-      //addTag('script', {src: 'js/marked.js'}, sync);
-
       <% _.forEach(scripts, function(url) { %>
-        addTag('script', {src: '<%= url %>'}, sync);
+      addTag('script', {src: '<%= url %>'}, sync);
       <% }); %>
       <% if(!deferLoad) { %>
       addTag('script', {src: 'js/angular-ui-tree.min.js'}, sync);
+      addTag('script', {src: 'js/tipuesearch_content.js'}, sync);
+      addTag('script', {src: 'js/tipuesearch.min.js'}, sync);
+      addTag('script', {src: 'js/tipuesearch_set.js'}, sync);
       addTag('script', {src: 'js/docs-setup.js'}, sync);
       addTag('script', {src: 'js/docs.js'}, sync);
       <% } %>
@@ -85,6 +86,7 @@
     ga('create', '<%= analytics.account %>', 'auto');
     ga('send', 'pageview');
 <% } %>
+
   </script>
 </head>
 
@@ -107,6 +109,12 @@
             </li>
           </ul>
           <%= navContent %>
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" name="search" class="form-control" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" placeholder="Search...">
+
+            </div>
+          </form>
         </div>
     </div>
   </header>
@@ -137,7 +145,7 @@
 
     <div class="row">
       <div class="col-xs-4">
-        <form class="form-search" ng-submit="submitForm()">
+
 
 
         <script type="text/ng-template" id="nodes_renderer.html">
@@ -156,21 +164,11 @@
             <li ng-repeat="module in newPages track by module.shortName" ui-tree-node ng-include="'nodes_renderer.html'"></li>
           </ol>
         </div>
-        </form>
+
       </div>
       <div class="col-xs-8">
-
-        <ul class="breadcrumb">
-          <li ng-repeat="crumb in breadcrumb">
-            <span ng-hide="crumb.url">{{crumb.name}}</span>
-            <a ng-show="crumb.url" href="{{crumb.url}}">{{crumb.name}}</a>
-            <span ng-show="crumb.url" class="divider">/</span>
-          </li>
-        </ul>
-
         <div id="loading" ng-show="loading">Loading...</div>
-
-        <div ng-hide="loading" ng-include src="currentPage.partialUrl" onload="afterPartialLoaded()" autoscroll class="content slide-reveal"></div>
+        <div ng-hide="loading" ng-include src="currentPage.partialUrl" onload="afterPartialLoaded()" autoscroll class="content slide-reveal" id="tipue_search_content"></div>
 <% if (discussions) { %>
         <div id="disqus" class="disqus">
           <h2>Discussion</h2>
@@ -180,6 +178,10 @@
       </div>
     </div>
   </div>
-
+<script type="text/javascript">
+  angular.element(document).ready(function() {
+       angular.element('#tipue_search_input').tipuesearch();
+  });
+</script>
 </body>
 </html>

@@ -43,6 +43,7 @@ var lookupMinerrMsg = function (doc) {
 
 exports.trim = trim;
 exports.metadata = metadata;
+exports.searchdata = searchdata;
 exports.scenarios = scenarios;
 exports.merge = merge;
 exports.checkBrokenLinks = checkBrokenLinks;
@@ -1281,6 +1282,34 @@ function scenarios(docs){
   }
 }
 
+function searchdata(docs){
+  var pages = [];
+
+  docs.forEach(function(doc){
+
+    var path = (doc.name || '').split(/(\:\s*)/);
+    for ( var i = 1; i < path.length; i++) {
+      path.splice(i, 1);
+    }
+    var shortName = path.pop().trim();
+
+    if (path.pop() == 'input') {
+      shortName = 'input [' + shortName + ']';
+    }
+
+
+
+    pages.push({
+      "title": shortName,
+      "text": doc.text.replace(/<[^>]*>/g, '').replace(/\r?\n|\r/g,' '),
+      "tags": doc.keywords(),
+      "url": "/docs/#/api/"+shortName
+    });
+  });
+
+
+  return pages;
+}
 
 //////////////////////////////////////////////////////////
 function metadata(docs) {

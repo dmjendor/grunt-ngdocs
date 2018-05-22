@@ -227,6 +227,7 @@ docsApp.serviceFactory.sections = function serviceFactory() {
 
 
 docsApp.controller.DocsController = function($scope, $location, $window, sections) {
+  $ctrl = this;
   var INDEX_PATH = /^(\/|\/index[^\.]*.html)$/,
       GLOBALS = /^angular\.([^\.]+)$/,
       MODULE = /^([^\.]+)$/,
