@@ -241,27 +241,39 @@ docsApp.controller.DocsController = function($scope, $location, $window, section
       MODULE_TYPE = /^([^\.]+)\..+\.([A-Z][^\.]+)$/;
 
 
+    function listToTree(data, options) {
+      options = options || {};
+      var ID_KEY = options.location || 'location';
+      var PARENT_KEY = options.parent || 'parent';
+      var CHILDREN_KEY = options.children || 'children';
 
-  var map = {}
-  for (var i = 0; i < NG_DOCS.pages.length; i++) {
-    map[NG_DOCS.pages[i].id] = NG_DOCS.pages[i];
-  }
-  var newArray = [];
-  for (location in map) {
-    var item = map[id];
-    var parent = map[item.parent];
-    if (parent) {
-      parent.children = parent.children || [];
-      parent.children.push(item); // add reference to item
-    } else { // root
-      newArray.push(item);
+      var tree = [],
+        childrenOf = {};
+      var item, id, parentId;
+
+      for (var i = 0, length = data.length; i < length; i++) {
+        item = data[i];
+        id = item[ID_KEY];
+        parentId = item[PARENT_KEY] || 0;
+        // every item may have children
+        childrenOf[id] = childrenOf[id] || [];
+        // init its children
+        item[CHILDREN_KEY] = childrenOf[id];
+        if (parentId != 0) {
+          // init its parent's children object
+          childrenOf[parentId] = childrenOf[parentId] || [];
+          // push it into its parent's children object
+          childrenOf[parentId].push(item);
+        } else {
+          tree.push(item);
+        }
+      };
+
+      return tree;
     }
-  }
 
-  console.log(newArray)
-  $scope.newPages = newArray;
+   $scope.newPages = listToTree(NG_DOCS.pages);
 
-  /**********************************
   /**********************************
    Publish methods
    ***********************************/

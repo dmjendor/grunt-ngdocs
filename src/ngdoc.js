@@ -922,20 +922,20 @@ Doc.prototype = {
   html_usage_component: function(dom){
     //this.html_usage_interface(dom)
     var self = this;
-    dom.h('Usage', function() {
-      dom.code(function() {
-        dom.text('<');
-        dom.text(dashCase(self.shortName));
-
-        renderParams('\n       ', '="', '"');
-        dom.text('>\n</');
-        dom.text(dashCase(self.shortName));
-        dom.text('>');
-      });
-      self.html_usage_componentInfo(dom);
-      self.html_usage_bindings(dom);
-    });
-
+    // dom.h('Usage', function() {
+    //   dom.code(function() {
+    //     dom.text('<');
+    //     dom.text(dashCase(self.shortName));
+    //
+    //     renderParams('\n       ', '="', '"');
+    //     dom.text('>\n</');
+    //     dom.text(dashCase(self.shortName));
+    //     dom.text('>');
+    //   });
+    //   self.html_usage_componentInfo(dom);
+    //
+    // });
+    self.html_usage_bindings(dom);
     self.method_properties_events(dom);
 
     function renderParams(prefix, infix, suffix, skipSelf) {
