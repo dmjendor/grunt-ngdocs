@@ -265,7 +265,6 @@ module.exports = function(grunt) {
 
   function writeSearch(search) {
     // create search file
-    console.log(search)
     grunt.file.write(search.__file, 'var tipuesearch =' + JSON.stringify(search, replacer, 2) + ';');
   }
 
