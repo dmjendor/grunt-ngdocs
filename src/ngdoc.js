@@ -972,7 +972,7 @@ Doc.prototype = {
             dom.text(self.shortName);
             dom.text('_expression | ');
             dom.text(self.shortName);
-            self.parameters(dom, ':', true);
+            self.parameters(dom, ' : ',false,true);
             dom.text(' }}');
           }
         });
@@ -983,7 +983,7 @@ Doc.prototype = {
           dom.text('$filter(\'');
           dom.text(self.shortName);
           dom.text('\')(');
-          self.parameters(dom, ', ');
+          self.parameters(dom, ', ',false,false);
           dom.text(')');
         });
       });
