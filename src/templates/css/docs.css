@@ -328,6 +328,9 @@ ul.events > li > h3 {
   background:rgb(189, 63, 66);
 }
 
+.type-hint-function {
+  background:#393;
+}
 
 .tree-node-content  {
   line-height: 25px;
@@ -338,4 +341,16 @@ ul.events > li > h3 {
   padding: 0px 3px;
   font-size: 10px;
   line-height: 1.2;
+}
+
+.tree-node > button.btn-xs {
+  margin-left: -22px;
+}
+
+.angular-ui-tree-nodes .angular-ui-tree-nodes {
+  padding-left: 10px;
+}
+
+.splitter {
+  border-left: #1d9ce5 1px solid;
 }

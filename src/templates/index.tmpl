@@ -150,11 +150,11 @@
 
         <script type="text/ng-template" id="nodes_renderer.html">
           <div class="tree-node tree-node-content">
-            <a class="btn btn-success btn-xs" ng-if="module.children && module.children.length > 0" data-nodrag ng-click="toggle(this)"><span
+            <a class="btn btn-success btn-xs" ng-if="module.children && module.children.length > 0 && module.type!=='function'" data-nodrag ng-click="toggle(this)"><span
               class="glyphicon" ng-class="{'glyphicon-plus': collapsed,'glyphicon-minus': !collapsed}"></span></a>
             <a href="{{module.url}}">{{module.shortName}}</a>
           </div>
-          <ol ui-tree-nodes="" ng-model="module.children" ng-class="{hidden: collapsed}">
+          <ol ui-tree-nodes="" ng-model="module.children" ng-class="{hidden: collapsed}" ng-if="module.type!=='function'">
             <li ng-repeat="module in module.children track by $index" ui-tree-node ng-include="'nodes_renderer.html'">
             </li>
           </ol>
@@ -166,7 +166,7 @@
         </div>
 
       </div>
-      <div class="col-xs-8">
+      <div class="col-xs-8 splitter">
         <div id="loading" ng-show="loading">Loading...</div>
         <div ng-hide="loading" ng-include src="currentPage.partialUrl" onload="afterPartialLoaded()" autoscroll class="content slide-reveal"></div>
         <div id="tipue_search_content"></div>
