@@ -43,7 +43,6 @@ var lookupMinerrMsg = function (doc) {
 
 exports.trim = trim;
 exports.metadata = metadata;
-exports.searchdata = searchdata;
 exports.scenarios = scenarios;
 exports.merge = merge;
 exports.checkBrokenLinks = checkBrokenLinks;
@@ -923,20 +922,20 @@ Doc.prototype = {
   html_usage_component: function(dom){
     //this.html_usage_interface(dom)
     var self = this;
-    // dom.h('Usage', function() {
-    //   dom.code(function() {
-    //     dom.text('<');
-    //     dom.text(dashCase(self.shortName));
-    //
-    //     renderParams('\n       ', '="', '"');
-    //     dom.text('>\n</');
-    //     dom.text(dashCase(self.shortName));
-    //     dom.text('>');
-    //   });
-    //   self.html_usage_componentInfo(dom);
-    //
-    // });
-    self.html_usage_bindings(dom);
+    dom.h('Usage', function() {
+      dom.code(function() {
+        dom.text('<');
+        dom.text(dashCase(self.shortName));
+
+        renderParams('\n       ', '="', '"');
+        dom.text('>\n</');
+        dom.text(dashCase(self.shortName));
+        dom.text('>');
+      });
+      self.html_usage_componentInfo(dom);
+      self.html_usage_bindings(dom);
+    });
+
     self.method_properties_events(dom);
 
     function renderParams(prefix, infix, suffix, skipSelf) {
@@ -972,7 +971,7 @@ Doc.prototype = {
             dom.text(self.shortName);
             dom.text('_expression | ');
             dom.text(self.shortName);
-            self.parameters(dom, ' : ',false,true);
+            self.parameters(dom, ':', true);
             dom.text(' }}');
           }
         });
@@ -983,7 +982,7 @@ Doc.prototype = {
           dom.text('$filter(\'');
           dom.text(self.shortName);
           dom.text('\')(');
-          self.parameters(dom, ', ',false,false);
+          self.parameters(dom, ', ');
           dom.text(')');
         });
       });
@@ -1282,34 +1281,6 @@ function scenarios(docs){
   }
 }
 
-function searchdata(docs){
-  var pages = [];
-
-  docs.forEach(function(doc){
-
-    var path = (doc.name || '').split(/(\:\s*)/);
-    for ( var i = 1; i < path.length; i++) {
-      path.splice(i, 1);
-    }
-    var shortName = path.pop().trim();
-
-    if (path.pop() == 'input') {
-      shortName = 'input [' + shortName + ']';
-    }
-
-
-
-    pages.push({
-      "title": shortName,
-      "text": doc.text.replace(/<[^>]*>/g, '').replace(/\r?\n|\r/g,' '),
-      "tags": doc.keywords(),
-      "url": "/docs/#/api/"+shortName
-    });
-  });
-
-
-  return pages;
-}
 
 //////////////////////////////////////////////////////////
 function metadata(docs) {
@@ -1325,13 +1296,6 @@ function metadata(docs) {
       shortName = 'input [' + shortName + ']';
     }
 
-    var a = doc.file.substring(0, doc.file.lastIndexOf('/')),
-      b = a.split('app/'), // clean off the root 'app' directory
-      c = b[1].split('.'), // strip off the .component.js or .controller.js
-      d = c[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }), // replace dashes with camelcase
-      location = d.replace(/\//g,'.'), // replace slashes with dots
-      parent = location.substring(0, location.lastIndexOf('.'));
-
     doc.isDeprecated = false;
     if (doc.deprecated !== undefined) {
       doc.isDeprecated = true;
@@ -1340,11 +1304,8 @@ function metadata(docs) {
     pages.push({
       section: doc.section,
       id: doc.id,
-      //id: globalID++,
       name: title(doc),
-      location: location,
-      parent: parent,
-      shortName: doc.shortName,
+      shortName: shortName,
       type: doc.ngdoc,
       moduleName: doc.moduleName,
       shortDescription: doc.shortDescription(),

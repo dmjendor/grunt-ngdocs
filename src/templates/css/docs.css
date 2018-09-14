@@ -9,12 +9,9 @@ img.AngularJS-small {
   margin:0 2px 0 0;
 }
 
-.breadcrumb > li {
-  display: inline;
-}
-
 .breadcrumb {
-  padding: 8px 0px;
+  padding-top: 6px;
+  padding-bottom: 0;
   line-height: 18px
 }
 
@@ -326,31 +323,4 @@ ul.events > li > h3 {
 
 .type-hint-number {
   background:rgb(189, 63, 66);
-}
-
-.type-hint-function {
-  background:#393;
-}
-
-.tree-node-content  {
-  line-height: 25px;
-  font-weight: bold;
-}
-
-.btn-xs {
-  padding: 0px 3px;
-  font-size: 10px;
-  line-height: 1.2;
-}
-
-.tree-node > button.btn-xs {
-  margin-left: -22px;
-}
-
-.angular-ui-tree-nodes .angular-ui-tree-nodes {
-  padding-left: 10px;
-}
-
-.splitter {
-  border-left: #1d9ce5 1px solid;
 }

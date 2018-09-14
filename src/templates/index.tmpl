@@ -32,24 +32,24 @@
 
       addTag('base', {href: baseUrl});
       addTag('link', {rel: 'stylesheet', href: 'css/bootstrap.min.css', type: 'text/css'});
-      addTag('link', {rel: 'stylesheet', href: 'css/bootstrap-theme.css', type: 'text/css'});
-      addTag('link', {rel: 'stylesheet', href: 'css/normalize.css', type: 'text/css'});
-      addTag('link', {rel: 'stylesheet', href: 'css/tipuesearch.css', type: 'text/css'});
-      addTag('link', {rel: 'stylesheet', href: 'css/angular-ui-tree.min.css', type: 'text/css'});
+      addTag('link', {rel: 'stylesheet', href: 'css/font-awesome.css', type: 'text/css'});
+      addTag('link', {rel: 'stylesheet', href: 'css/prettify.css', type: 'text/css'});
       addTag('link', {rel: 'stylesheet', href: 'css/docs.css', type: 'text/css'});
+      addTag('link', {rel: 'stylesheet', href: 'css/animations.css', type: 'text/css'});
 
       <% _.forEach(styles, function(url) { %>
          addTag('link', {rel: 'stylesheet', href: '<%= url %>', type: 'text/css'}, sync);
       <% }); %>
 
+      addTag('script', {src: 'js/google-code-prettify.js'}, sync);
+      addTag('script', {src: 'js/marked.js'}, sync);
+
       <% _.forEach(scripts, function(url) { %>
-      addTag('script', {src: '<%= url %>'}, sync);
+        addTag('script', {src: '<%= url %>'}, sync);
       <% }); %>
       <% if(!deferLoad) { %>
-      addTag('script', {src: 'js/angular-ui-tree.min.js'}, sync);
-      addTag('script', {src: 'js/tipuesearch_content.js'}, sync);
-      addTag('script', {src: 'js/tipuesearch.min.js'}, sync);
-      addTag('script', {src: 'js/tipuesearch_set.js'}, sync);
+      addTag('script', {src: 'js/angular-bootstrap.js'}, sync);
+      addTag('script', {src: 'js/angular-bootstrap-prettify.js'}, sync);
       addTag('script', {src: 'js/docs-setup.js'}, sync);
       addTag('script', {src: 'js/docs.js'}, sync);
       <% } %>
@@ -86,13 +86,13 @@
     ga('create', '<%= analytics.account %>', 'auto');
     ga('send', 'pageview');
 <% } %>
-
   </script>
 </head>
 
 <body>
   <header class="header">
-    <div class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
         <div class="container">
           <% if (image) { %>
             <% if (imageLink) { %>
@@ -103,19 +103,17 @@
               </a>
             <% } %>
           <% } %>
-          <ul class="nav navbar-nav">
+          <% if (title) {%>
+            <a <% if (titleLink) { %> href="<%= titleLink %>" <% } %> class="brand"><%= title %></a>
+          <% } %>
+          <ul class="nav">
             <li ng-repeat="(url, name) in sections" ng-class="{active: isActivePath(url)}">
               <a ng-href="{{url}}"><i class="icon-book icon-white"></i> {{name}}</a>
             </li>
           </ul>
           <%= navContent %>
-          <form class="navbar-form navbar-right" role="search" id="search">
-            <div class="form-group">
-              <input type="text" name="search" class="form-control" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" placeholder="Search...">
-
-            </div>
-          </form>
         </div>
+      </div>
     </div>
   </header>
 
@@ -123,7 +121,7 @@
     <div class="row clear-navbar"></div>
 
     <div class="row">
-      <div class="col-xs-12">
+      <div class="span12">
         <!--[if lt IE 7]>
         <p class="alert alert-error">Your browser is <em>ancient!</em>
           <a href="http://browsehappy.com/">Upgrade to a different browser</a> or
@@ -144,32 +142,109 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-4">
-
-
-
-        <script type="text/ng-template" id="nodes_renderer.html">
-          <div class="tree-node tree-node-content">
-            <a class="btn btn-success btn-xs" ng-if="module.children && module.children.length > 0 && module.type!=='function'" data-nodrag ng-click="toggle(this)"><span
-              class="glyphicon" ng-class="{'glyphicon-plus': collapsed,'glyphicon-minus': !collapsed}"></span></a>
-            <a href="{{module.url}}">{{module.shortName}}</a>
+      <div class="span3">
+        <form class="form-search" ng-submit="submitForm()">
+          <% if (bestMatch) { %>
+          <div class="dropdown search"
+               ng-class="{open: focused && bestMatch.rank > 0 && bestMatch.page != currentPage}">
+            <input type="text" ng-model="search" placeholder="search the docs"
+                   tabindex="1" accesskey="s" class="search-query" focused="focused">
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{bestMatch.page.url}}">{{bestMatch.page.shortName}}</a>
+              </li>
+            </ul>
           </div>
-          <ol ui-tree-nodes="" ng-model="module.children" ng-class="{hidden: collapsed}" ng-if="module.type!=='function'">
-            <li ng-repeat="module in module.children track by $index" ui-tree-node ng-include="'nodes_renderer.html'">
-            </li>
-          </ol>
-        </script>
-        <div ui-tree>
-          <ol ui-tree-nodes="" ng-model="newPages" id="tree-root" data-max-depth="10">
-            <li ng-repeat="module in newPages track by $index" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-          </ol>
-        </div>
+          <% } else { %>
+          <input type="text" ng-model="search" placeholder="search the docs"
+                 tabindex="1" accesskey="s" class="search-query">
+          <% } %>
+          <div class="spacer"></div>
 
+          <ul class="nav nav-list well" ng-show="pages.length">
+            <li ng-repeat="page in pages track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+          </ul>
+
+          <ul class="nav nav-list well" ng-repeat="module in modules track by module.url" class="api-list-item">
+            <li class="nav-header module">
+              <a class="guide">module</a>
+              <a class="code" href="{{module.url}}" title="{{module.name}}">{{module.name}}</a>
+            </li>
+
+            <li ng-repeat="page in module.others track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.components.length">
+              <a class="guide">component</a>
+            </li>
+            <li ng-repeat="page in module.components track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.directives.length">
+              <a class="guide">directive</a>
+            </li>
+            <li ng-repeat="page in module.directives track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.controllers.length">
+              <a class="guide">controller</a>
+            </li>
+            <li ng-repeat="page in module.controllers track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.filters.length">
+              <a class="guide">filter</a>
+            </li>
+            <li ng-repeat="page in module.filters track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.services.length">
+              <a class="guide">service</a>
+            </li>
+            <li ng-repeat="service in module.services track by  (service.instance.url || service.provider.url)" ng-class="navClass(service.instance, service.provider)" class="api-list-item expand">
+              <a ng-show="service.provider" class="pull-right" href="{{service.provider.url}}" tabindex="2"><i class="icon-cog"></i></a>
+              <a href="{{service.instance ? service.instance.url : service.provider.url}}" tabindex="2">{{service.name}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.types.length">
+              <a class="guide">Types</a>
+            </li>
+            <li ng-repeat="page in module.types track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.shortName}}</a>
+            </li>
+
+            <li class="nav-header section" ng-show="module.globals.length">
+              <a class="global guide">global APIs</a>
+              &nbsp;
+            </li>
+            <li ng-repeat="page in module.globals track by page.url" ng-class="navClass(page)" class="api-list-item expand">
+              <a href="{{page.url}}" tabindex="2">{{page.id}}</a>
+            </li>
+
+          </ul>
+
+        </form>
       </div>
-      <div class="col-xs-8 splitter">
+      <div class="span9">
+
+        <ul class="breadcrumb">
+          <li ng-repeat="crumb in breadcrumb">
+            <span ng-hide="crumb.url">{{crumb.name}}</span>
+            <a ng-show="crumb.url" href="{{crumb.url}}">{{crumb.name}}</a>
+            <span ng-show="crumb.url" class="divider">/</span>
+          </li>
+        </ul>
+
         <div id="loading" ng-show="loading">Loading...</div>
+
         <div ng-hide="loading" ng-include src="currentPage.partialUrl" onload="afterPartialLoaded()" autoscroll class="content slide-reveal"></div>
-        <div id="tipue_search_content"></div>
 <% if (discussions) { %>
         <div id="disqus" class="disqus">
           <h2>Discussion</h2>
@@ -179,18 +254,6 @@
       </div>
     </div>
   </div>
-<script type="text/javascript">
-angular.element(document).ready(function() {
-       angular.element('#tipue_search_input').tipuesearch();
-       angular.element('#search').on('submit',function(){
-         angular.element('.content').hide();
-       });
 
-       angular.element('a').click(function(e){
-         angular.element('.content').show();
-         angular.element('#tipue_search_content').hide();
-       });
-  });
-</script>
 </body>
 </html>

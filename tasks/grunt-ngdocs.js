@@ -87,8 +87,6 @@ module.exports = function(grunt) {
 
     setup = prepareSetup(section, options);
 
-    search = prepareSearch(section, options);
-
     grunt.log.writeln('Generating Documentation...');
 
     prepareLinks(pkg, options);
@@ -116,7 +114,6 @@ module.exports = function(grunt) {
     ngdoc.checkBrokenLinks(reader.docs, setup.apis, options);
 
     setup.pages = union(setup.pages, ngdoc.metadata(reader.docs));
-    search.pages = union(search.pages, ngdoc.searchdata(reader.docs));
 
     if (options.navTemplate) {
       options.navContent = grunt.template.process(grunt.file.read(options.navTemplate));
@@ -125,7 +122,6 @@ module.exports = function(grunt) {
     }
 
     writeSetup(setup);
-    writeSearch(search);
 
     if (options.inlinePartials) {
       inlinePartials(path.resolve(options.dest, 'index.html'), path.resolve(options.dest, 'partials'));
@@ -191,7 +187,7 @@ module.exports = function(grunt) {
   unittest.prepareLinks = prepareLinks;
 
   function prepareSetup(section, options) {
-    var search, data, context = {},
+    var setup, data, context = {},
         file = path.resolve(options.dest, 'js/docs-setup.js');
     if (exists(file)) {
       // read setup from file
@@ -242,31 +238,6 @@ module.exports = function(grunt) {
     grunt.file.write(setup.__file, 'NG_DOCS=' + JSON.stringify(setup, replacer, 2) + ';');
   }
 
-
-  function prepareSearch(section, options) {
-    var search, data, context = {},
-      file = path.resolve(options.dest, 'js/tipuesearch_content.js');
-    if (exists(file)) {
-      // read search from file
-      data = grunt.file.read(file);
-      vm.runInNewContext(data, context, file);
-      search = context.tipuesearch;
-      // keep only pages from other build tasks
-      search.pages = search.pages.filter(function(p) {return p.section !== section;});
-    } else {
-      // build clean dest
-      search = { pages: [] };
-      copyTemplates(options.dest);
-    }
-    search.__file = file;
-    search.__options = options;
-    return search;
-  }
-
-  function writeSearch(search) {
-    // create search file
-    grunt.file.write(search.__file, 'var tipuesearch =' + JSON.stringify(search, replacer, 2) + ';');
-  }
 
   function copyTemplates(dest) {
     grunt.file.expandMapping(['**/*', '!**/*.tmpl'], dest, {cwd: templates}).forEach(function(f) {
